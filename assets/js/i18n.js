@@ -1,8 +1,13 @@
 // English | हिंदी language switch.
 // English is the markup default. Hindi strings live in i18n-hi.js, keyed by the
 // English text (whitespace-collapsed), so pages need no per-element markup.
+// The dictionary is only downloaded when Hindi is in use. For returning Hindi
+// visitors, an inline script in <head> preloads it and adds html.i18n-pending,
+// which hides the page until the translation is applied (no flash of English).
 (() => {
   const STORAGE_KEY = "bsg-lang";
+  const DICT_SRC = document.currentScript.src.replace("/i18n.js", "/i18n-hi.js");
+  let dictPromise = null;
   const SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "svg", "SVG", "TEXTAREA"]);
   const ATTRS = ["alt", "placeholder", "aria-label", "title"];
 
@@ -89,6 +94,35 @@
     });
   };
 
+  const loadDict = () => {
+    if (window.BSG_I18N_HI) return Promise.resolve();
+    if (!dictPromise) {
+      dictPromise = new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.src = DICT_SRC;
+        script.onload = () => (window.BSG_I18N_HI ? resolve() : reject(new Error("Hindi dictionary missing")));
+        script.onerror = () => {
+          dictPromise = null;
+          reject(new Error("Hindi dictionary failed to load"));
+        };
+        document.head.appendChild(script);
+      });
+    }
+    return dictPromise;
+  };
+
+  const setLang = (lang) => {
+    if (lang !== "hi") {
+      apply("en");
+      return Promise.resolve();
+    }
+    return loadDict()
+      .then(() => apply("hi"))
+      .catch(() => apply("en"));
+  };
+
+  const reveal = () => document.documentElement.classList.remove("i18n-pending");
+
   document.addEventListener("DOMContentLoaded", () => {
     collect();
 
@@ -96,10 +130,14 @@
       button.addEventListener("click", () => {
         const lang = button.dataset.lang === "hi" ? "hi" : "en";
         saveLang(lang);
-        apply(lang);
+        setLang(lang);
       });
     });
 
-    if (readSavedLang() === "hi") apply("hi");
+    if (readSavedLang() === "hi") {
+      setLang("hi").then(reveal);
+    } else {
+      reveal();
+    }
   });
 })();

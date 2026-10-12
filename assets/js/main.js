@@ -1,12 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
   const body = document.body;
-  const preloader = document.querySelector("[data-preloader]");
   const navToggle = document.querySelector("[data-nav-toggle]");
   const nav = document.querySelector("#siteNav");
 
   const welcomePopup = document.querySelector("[data-welcome-popup]");
   const WELCOME_SEEN_KEY = "bsg-welcome-seen";
-  let welcomeScheduled = false;
 
   const welcomeAlreadySeen = () => {
     try {
@@ -20,23 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (welcomePopup && welcomePopup.open) welcomePopup.close();
   };
 
-  // Shown once per browser session, right after the preloader clears.
-  const scheduleWelcome = () => {
-    if (welcomeScheduled || !welcomePopup || typeof welcomePopup.showModal !== "function") return;
-    welcomeScheduled = true;
-    if (welcomeAlreadySeen()) return;
-
-    window.setTimeout(() => {
-      welcomePopup.showModal();
-      try {
-        window.sessionStorage.setItem(WELCOME_SEEN_KEY, "1");
-      } catch (error) {
-        // Without storage the popup may show again on the next page; harmless.
-      }
-    }, 400);
-  };
-
-  if (welcomePopup) {
+  // Shown once per browser session, shortly after the page is ready.
+  if (welcomePopup && typeof welcomePopup.showModal === "function") {
     welcomePopup.querySelectorAll("[data-welcome-close]").forEach((button) => {
       button.addEventListener("click", closeWelcome);
     });
@@ -45,24 +28,17 @@ document.addEventListener("DOMContentLoaded", () => {
     welcomePopup.addEventListener("click", (event) => {
       if (event.target === welcomePopup) closeWelcome();
     });
-  }
 
-  const hidePreloader = () => {
-    if (!preloader) return;
-    preloader.classList.add("is-hidden");
-    body.classList.remove("is-loading");
-    window.setTimeout(() => {
-      preloader.remove();
-    }, 500);
-    scheduleWelcome();
-  };
-
-  if (preloader) {
-    body.classList.add("is-loading");
-    window.addEventListener("load", hidePreloader, { once: true });
-    window.setTimeout(hidePreloader, 1800);
-  } else {
-    scheduleWelcome();
+    if (!welcomeAlreadySeen()) {
+      window.setTimeout(() => {
+        welcomePopup.showModal();
+        try {
+          window.sessionStorage.setItem(WELCOME_SEEN_KEY, "1");
+        } catch (error) {
+          // Without storage the popup may show again on the next page; harmless.
+        }
+      }, 600);
+    }
   }
 
   if (navToggle && nav) {
