@@ -601,5 +601,8 @@ window.BSG_I18N_HI = {
   "Advanced ICU with ventilator support, and safe anaesthesia for every operation.": "वेंटिलेटर सपोर्ट के साथ अत्याधुनिक आईसीयू (ICU), और हर ऑपरेशन के लिए सुरक्षित एनेस्थीसिया (बेहोशी)।",
   "Not sure which department you need?": "पता नहीं किस विभाग में दिखाना है?",
   "Call the hospital and describe the problem. Our team will tell you which doctor to see and when.": "हॉस्पिटल को कॉल करें और अपनी समस्या बताएँ। हमारी टीम बताएगी कि किस डॉक्टर को और कब दिखाना है।",
-  "15 specialities, advanced facilities and 24×7 emergency care at BSG Hospital.": "BSG हॉस्पिटल में 15 स्पेशलिटी, अत्याधुनिक सुविधाएँ और 24×7 इमरजेंसी सेवा।"
+  "15 specialities, advanced facilities and 24×7 emergency care at BSG Hospital.": "BSG हॉस्पिटल में 15 स्पेशलिटी, अत्याधुनिक सुविधाएँ और 24×7 इमरजेंसी सेवा।",
+  "Visiting Consultants": "विज़िटिंग कंसल्टेंट (Visiting Consultants)",
+  "Specialist doctors who see patients at BSG Hospital.": "विशेषज्ञ डॉक्टर जो BSG हॉस्पिटल में मरीज़ों को देखते हैं।",
+  "Find a Doctor": "डॉक्टर खोजें"
 };
